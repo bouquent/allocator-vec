@@ -1,42 +1,7 @@
-#include <iostream>
-#include <initializer_list>
-#include <utility>
-#include <algorithm>
-#include <string>
+#ifndef ALLOCATOR_HPP
+#define ALLOCATOR_HPP
 
-namespace myconstruct {
-    template<class Ty1>
-    void construct(Ty1 *ptr)
-    {
-        /*在ptr的地址使用默认构造函数构造Ty1类型变量*/
-        ::new(ptr) Ty1();
-    }
-
-    template<class Ty1, class Ty2>
-    void construct(Ty1 *ptr, const Ty2& value)
-    {
-        ::new(ptr) Ty2(value);
-    }
-
-    template<class Ty1, class... Args>
-    void construct (Ty1 *ptr, Args&&... args)
-    {
-        ::new(ptr) Ty1(std::forward<Args>(args)...);
-    }
-
-    template<class Ty1>
-    void destroy(Ty1 *ptr)
-    {
-        if (ptr == nullptr) return ;
-        ptr->~Ty1();
-    }
-    template<class Ty1, class Ty2>
-    void destroy(Ty1 *first, Ty2 *last)
-    {
-        for (auto iter = first; iter != last; iter++)
-            destroy(*&iter);
-    }
-};
+#include "myconstruct.hpp"
 
 template<class T>
 class allocator
@@ -93,14 +58,12 @@ void allocator<T>::construct(T* ptr)
 template<class T>
 void allocator<T>::construct(T* ptr, const T& value)
 {
-    //std::cout << "allocator::construct(T*, const T&)!\n";
     myconstruct::construct(ptr, value);
 }
 
 template<class T>
 void allocator<T>::construct(T* ptr, T&& value)  //这里的value是右值引用，但右值引用其实是左值
 {
-    //std::cout << "allocator::construct(T*, T&&)!\n";
     myconstruct::construct(ptr, std::move(value));  //所以这里需要使用move将左值强制转换成右值
 }
 
@@ -133,3 +96,6 @@ void allocator<T>::destroy(T* first, T* last)
 {
     myconstruct::destroy(first, last);
 }
+
+
+#endif
