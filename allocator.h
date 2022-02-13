@@ -2,6 +2,7 @@
 #define ALLOCATOR_H
 
 #include "myconstruct.h"
+//123git now
 
 template<typename T>
 class allocator
