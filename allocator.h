@@ -3,7 +3,6 @@
 
 #include "myconstruct.h"
 
-
 template<typename T>
 class allocator
 {
